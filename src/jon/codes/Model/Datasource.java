@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Datasource {
+    //Create constant for connection to music db file and path
     public static final String DB_NAME = "music.db";
     public static final String CONNECTION_STRING = "jdbc:sqlite:C:\\Users\\jmartinez\\IdeaProjects\\music\\" + DB_NAME;
 
@@ -92,7 +93,7 @@ public class Datasource {
     public static final String QUERY_ALBUMS_BY_ARTIST_ID = "SELECT * FROM " + TABLE_ALBUMS +
             " WHERE " + COLUMN_ALBUM_ARTIST + " = ? ORDER BY " + COLUMN_ALBUM_NAME + " COLLATE NOCASE";
 
-    //Use prepared statements to avoid some type of SQL injection attacks
+    //Use prepared statements to help with some type of SQL injection attacks
     private PreparedStatement insertArtist;
     private PreparedStatement insertAlbum;
     private PreparedStatement insertSong;
@@ -103,6 +104,7 @@ public class Datasource {
 
     private Connection conn;
 
+    //Establish connections to the database
     public boolean open() {
         try {
             conn = DriverManager.getConnection(CONNECTION_STRING);
@@ -114,12 +116,15 @@ public class Datasource {
             queryAlbumsByArtistId = conn.prepareStatement(QUERY_ALBUMS_BY_ARTIST_ID);
 
             return true;
+
+        //Throw exception in case connection error
         } catch (SQLException e) {
-            System.out.println("Couldn't connect to the database: " + e.getMessage());
+            System.out.println("Unable to connect to the database: " + e.getMessage());
             return false;
         }
     }
 
+    //Close connection at the end of process
     public void close() {
         try {
             if (conn != null) {
@@ -135,11 +140,13 @@ public class Datasource {
                 insertSong.close();
             }
 
+        //Throw exception in case any connection is not close properly
         } catch (SQLException e) {
             System.out.println("Could not close: " + e.getMessage());
         }
     }
 
+    //Method to query artist in database
     public List<Artist> queryArtists(int sortOrder) {
         StringBuilder sb = new StringBuilder(QUERY_ARTIST_START);
 //        sb.append("\"");
@@ -175,6 +182,7 @@ public class Datasource {
         }
     }
 
+    //Method to get albums for artists in the database
     public List<String> queryAlbumsForArtist(String artistName, int sortOrder) {
         StringBuilder sb = new StringBuilder(QUERY_ALBUMS_ARTIST_START);
         sb.append(artistName);
@@ -204,6 +212,7 @@ public class Datasource {
         }
     }
 
+    //Method to get songs by artist from the database
     public List<SongArtist> querySongArtist(String songName, int sortOrder) {
         StringBuilder sb = new StringBuilder(QUERY_SONG_START);
         sb.append(songName);
@@ -331,7 +340,7 @@ public class Datasource {
         }
     }
 
-
+    //Method to insert album into the database
     public int insertAlbum(String name, int artistId) throws SQLException {
 
         queryAlbum.setString(1, name);
@@ -357,6 +366,7 @@ public class Datasource {
         }
     }
 
+    //Method to insert artist into the database
     private int insertArtist(String name) throws SQLException {
 
         queryArtist.setString(1, name);
