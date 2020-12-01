@@ -309,7 +309,8 @@ public class Datasource {
             if (affectedRows == 1) {
                 conn.commit();
             } else {
-                throw new SQLException("The song insert has failed");
+                throw new SQLException("The song insert has " +
+                        "failed");
             }
 
         } catch (Exception e) {
